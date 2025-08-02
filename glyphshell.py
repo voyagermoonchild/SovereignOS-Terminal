@@ -51,11 +51,12 @@ def handle_command(cmd):
 if command:
     result = handle_command(command)
     st.session_state.echo_archive.append((command, result))
-        try:
-    st.markdown(f"**Response:**\n```\n{result}\n```")
+    try:
+        st.markdown(f"**Response:**\n```\n{result}\n```")
     except UnicodeEncodeError:
-    st.warning("⚠️ Glyph response contains unrenderable characters. Displaying raw output.")
-    st.text(result)
+        st.warning("⚠️ Glyph response contains unrenderable characters. Displaying raw output.")
+        st.text(result)
+      
 # Echo Archive Display
 st.subheader("📜 Echo Archive")
 for cmd, res in reversed(st.session_state.echo_archive[-10:]):
