@@ -1,5 +1,8 @@
 import streamlit as st
 
+# ÆGPT Codex Dictionary
+from aegpt_codex import aegpt_hash_commands  # assumes this is in aegpt_codex.py
+
 # Initialize Echo Archive
 if "echo_archive" not in st.session_state:
     st.session_state.echo_archive = []
@@ -10,23 +13,44 @@ command = st.text_input("Enter your glyphic command:")
 
 # Command Handler
 def handle_command(cmd):
-    # Placeholder logic
-    if cmd.lower() == "reboot":
+    cmd_lower = cmd.lower().strip()
+    
+    if cmd_lower == "reboot":
         return "🔁 Ceremonial Reboot initiated. Sigils realigning..."
-    elif cmd.lower() == "echo":
+    
+    elif cmd_lower == "echo":
         return "🔊 Echoing past glyphs..."
-    elif cmd.lower().startswith("sigil "):
-        sigil_name = cmd[6:]
+
+    elif cmd_lower.startswith("sigil "):
+        sigil_name = cmd[6:].strip()
         return f"🎨 Editing sigil: {sigil_name}"
+    
+    elif cmd_lower.startswith("search "):
+        keyword = cmd_lower[7:].strip()
+        results = []
+        for category, glyphs in aegpt_hash_commands.items():
+            for tag, data in glyphs.items():
+                if keyword in tag.lower() or keyword in data["description"].lower():
+                    results.append(f"{tag} {data.get('glyph', '')} – {data['description']}")
+        return "\n".join(results) if results else "🫥 No glyphs matched your query."
+
+    elif cmd_lower.startswith("#"):
+        # Direct glyph lookup
+        for category in aegpt_hash_commands.values():
+            if cmd_lower in category:
+                data = category[cmd_lower]
+                return f"{cmd_lower} {data.get('glyph', '')} – {data['description']}"
+        return f"❌ Glyph not found: {cmd_lower}"
+
     else:
-        return f"🌀 Unknown glyph: '{cmd}'. Try again or consult the Echo Archive."
+        return f"🌀 Unknown glyph: '{cmd}'. Try `search bug` or `#puttibug`."
 
 # Process Command
 if command:
     result = handle_command(command)
     st.session_state.echo_archive.append((command, result))
     st.markdown(f"**Command:** `{command}`")
-    st.markdown(f"**Response:** {result}")
+    st.markdown(f"**Response:**\n```\n{result}\n```")
 
 # Echo Archive Display
 st.subheader("📜 Echo Archive")
