@@ -2,9 +2,6 @@ import streamlit as st
 
 from aegpt_codex import aegpt_hash_commands
 
-# ÆGPT Codex Dictionary
-  # assumes this is in aegpt_codex.py
-
 # Initialize Echo Archive
 if "echo_archive" not in st.session_state:
     st.session_state.echo_archive = []
