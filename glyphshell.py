@@ -1,5 +1,7 @@
 import streamlit as st
 
+from aegpt_codex import aegpt_hash_commands
+
 # ÆGPT Codex Dictionary
 from aegpt_codex import aegpt_hash_commands  # assumes this is in aegpt_codex.py
 
