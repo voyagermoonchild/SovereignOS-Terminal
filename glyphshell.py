@@ -49,10 +49,21 @@ if command:
     result = handle_command(command)
     st.session_state.echo_archive.append((command, result))
     try:
-        st.markdown(f"**Response:**\n```\n{result}\n```")
+        # Convert emoji shortcodes to their rendered form before passing to markdown
+        formatted_result = result
+        if isinstance(result, str):
+            # Replace emoji shortcodes with their rendered equivalents
+            for category in aegpt_hash_commands.values():
+                for tag, data in category.items():
+                    glyph = data.get('glyph', '')
+                    if glyph.startswith(':'):
+                        # Replace the shortcode with the actual emoji if possible
+                        formatted_result = formatted_result.replace(glyph, f"```{glyph}```")
+        
+        st.markdown(f"**Response:**\n{formatted_result}")
     except UnicodeEncodeError:
         st.warning("⚠️ Glyph response contains unrenderable characters. Displaying raw output.")
-        st.text(result)
+        st.text(result)  # Fallback to text if markdown fails)
       
 # Echo Archive Display
 st.subheader("📜 Echo Archive")
